@@ -4,7 +4,7 @@
 %% Load Paths
 % Complete Data
 if exist('data','var') == 0
-    load('C:\Users\Lara\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Organized\dataOrganized.mat');
+    load('C:\Users\Laraw\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Organized\dataOrganized.mat');
 end
 
 %%
@@ -32,11 +32,11 @@ for i = 1:length(subjects)
                 for q = 1:2:24 % duration 
                     day_ind = dayNum == j;
                     if k + q < 24
-                        mask = ~(day_ind & hrs>=k & hrs<=k+q);
+                        mask = day_ind & hrs>=k & hrs<=k+q;
                     else
                         mask_day1 = day_ind & hrs>=k & hrs<=24;
                         mask_day2 = dayNum == j+1 & hrs>=0 & hrs<=k+q-24;
-                        mask = ~(mask_day1 | mask_day2);
+                        mask = mask_day1 | mask_day2;
                     end
                     ind = [ind,mask];
                     day = [day;j];
@@ -56,8 +56,8 @@ for i = 1:length(subjects)
 %          ylim([0 2500])
 end
 
-save_fn = 'C:\Users\Lara\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Masks\masksWedSat2-2.mat';
-save(save_fn, 'masks') 
+
+
 
 
 

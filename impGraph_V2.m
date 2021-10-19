@@ -1,128 +1,158 @@
 %% Actigraphy imputation via network
-% Lara Weed 14 OCT 2021
+% Lara Weed 18 OCT 2021
 
-%% Load Paths
-% Masked Data
-dpath = 'C:\Users\Laraw\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\raw\ukbb_masked';
-ddpath = dir(dpath);
-fn = {ddpath.name}';
-fn = fn(3:end);
+%% Load Data
+% Data
+load('C:\Users\Lara\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Organized\dataOrganized.mat')
 
-% Complete Data
-dpathC = 'C:\Users\Laraw\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\raw\ukbb_complete';
-ddpathC = dir(dpathC);
-fnC = {ddpathC.name}';
-fnC = fnC(3:end);
+% Masks
+load('C:\Users\Lara\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Masks\masksWedSat2-2.mat')
 
-%% Get file info
-subjects = {};
-days = {};
-hrsmiss = {};
+%% Loop
 
-for ff = 1:length(fn)
-    us = find(fn{ff}=='_');
-    pe = find(fn{ff}=='.');
-    subjects{ff,1} = fn{ff}(us(1)+1:us(4)-1);
-    days{ff,1} = fn{ff}(pe(1)+1:pe(2)-1);
-    hrsmiss{ff,1} = fn{ff}(pe(2)+1:pe(3)-1);
-end
+% Set Vars
+Subject = []; 
+Day = [];
+StartHr = [];
+Dur = [];
+IV_mask = [];
+IS_mask = [];
+IV_imp = [];
+IS_imp = [];
+IV_mimp = [];
+IS_mimp = [];
+IV_comp = [];
+IS_comp = [];
 
-%% Preallocate
-IV_mask = nan(length(fn),1);
-IS_mask = nan(length(fn),1);
-IV_imp = nan(length(fn),1);
-IS_imp = nan(length(fn),1);
-IV_mimp = nan(length(fn),1);
-IS_mimp = nan(length(fn),1);
+subjects = fields(masks);
+parfor i = 1:length(subjects)
+    %clear act_full act t
+    fprintf('%d - %s\n',i,subjects{i})
+    m = masks.(subjects{i}).ind;
+    
+    act_full = data.(subjects{i}).acc;
+    t = data.(subjects{i}).t;
+    
+    [IV_comp1,IS_comp1] = calcIVIS(act_full,t);
+    
+    for j = 1:size(m,2)
+        fprintf('    Mask %d of %d\n',j,size(m,2))
+        %clear act
+        try
+            %% -------------------------- Apply Mask --------------------------- %%
+            act = act_full.*m(:,j);
 
-for i = 1:length(fn)
-    %% -------------------------- Load Data ---------------------------- %%
-    fprintf('%d - %s - %s - %s\n',i,subjects{i},days{i},hrsmiss{i})
-    dt = readtable(fullfile(dpath,fn{i}));
-    dt.Var1 = datetime(dt.Var1);
-    dt.Properties.VariableNames = {'t','act'};
-    
-    %% ---------------------- Generate Gap Index ----------------------- %%
-    notGap_ind = dt.act>0; %not gaps
-    gaps = gapDur(notGap_ind);
-    
-    %% -------------------- Generate Network Graph --------------------- %%
-    fprintf('    Generating Network...\n')
-    
-    % Remove missing data
-    act = dt.act(notGap_ind);
-    t = dt.t(notGap_ind);
-    
-    % Generate Adjacency Matrix
-    [Adj,nl] = genAccNet(act,t);
+            %% ---------------------- Generate Gap Index ----------------------- %%
+            notGap_ind = m(:,j)>0; %not gaps
+            gaps = gapDur(notGap_ind);
 
-    %% ----------------------- Compute Imputation ---------------------- %%
-    fprintf('    Computing Imputation...\n')
-    
-    % Graph Imputation
-    imputed = graphImputation(dt.act,gaps,Adj,nl);
-    
-    % Mean Imputation
-    meanimputed = meanImputation(dt.act,dt.t,gaps);
-    
-    %% ------------------------- Calculate IVIS ------------------------ %%
-    fprintf('    Calculate IVIS...\n')
-    [IV_mask1,IS_mask1] = calcIVIS(dt.act,dt.t);
-    [IV_imp1,IS_imp1] = calcIVIS(imputed,dt.t);
-    [IV_meanimp,IS_meanimp] = calcIVIS(meanimputed,dt.t);
-    
-    IV_mask(i) = IV_mask1;
-    IS_mask(i) = IS_mask1;
-    IV_imp(i) = IV_imp1;
-    IS_imp(i) = IS_imp1;
-    IV_mimp(i) = IV_meanimp;
-    IS_mimp(i) = IS_meanimp;
-    
+            %% -------------------- Generate Network Graph --------------------- %%    
+            % Generate Adjacency Matrix
+            [Adj,nl] = genAccNet(act(notGap_ind),t(notGap_ind));
+
+            %% ----------------------- Compute Imputation ---------------------- %%
+            % Graph Imputation
+            imputed = graphImputation(act,gaps,Adj,nl);
+
+            % Mean Imputation
+            meanimputed = meanImputation(act,t,gaps);
+
+            %% ------------------------- Calculate IVIS ------------------------ %%
+            [IV_mask1,IS_mask1] = calcIVIS(act,t);
+            [IV_imp1,IS_imp1] = calcIVIS(imputed,t);
+            [IV_meanimp,IS_meanimp] = calcIVIS(meanimputed,t);
+
+            Subject = [Subject;subjects{i}]; 
+            Day = [Day;masks.(subjects{i}).type(j,1)];
+            StartHr = [StartHr;masks.(subjects{i}).type(j,2)];
+            Dur = [Dur;masks.(subjects{i}).type(j,3)];
+            IV_mask = [IV_mask; IV_mask1];
+            IS_mask = [IS_mask; IS_mask1];
+            IV_imp = [IV_imp; IV_imp1];
+            IS_imp = [IS_imp; IS_imp1];
+            IV_mimp = [IV_mimp;IV_meanimp];
+            IS_mimp = [IS_mimp;IS_meanimp];
+            IV_comp = [IV_comp;IV_comp1];
+            IS_comp = [IS_comp;IS_comp1];
+        catch
+            fprintf('    error\n')
+        end
     %% ------------------------ Plot ------------------------- %%   
 %     figure
 %      plot(dt.t,dt.act)
 %      hold on
 %      plot(dt.t(gaps(:,1)),dt.act(gaps(:,1)),'k*')
-    
+    end   
 end
 
 
+T = table(Subject,Day,StartHr,Dur,IV_comp,IV_mask,IV_imp,IV_mimp,IS_comp,IS_mask,IS_imp,IS_mimp);
 
-%% Load data
-subjectsC = {};
-for ffC = 1:length(fnC)
-    us = find(fnC{ffC}=='_');
-    subjectsC{ffC,1} = fnC{ffC}(1:us(3)-1);
-end
-IV_c = nan(length(fnC),1);
-IS_c =nan(length(fnC),1);
-for i = 1:length(fnC)
-    dt = readtable(fullfile(dpathC,fnC{i}),'Delimiter', ',');
-    dt2 = readtable(fullfile(dpathC,fnC{i}));
-    ttt=[];
-    for jj = 1:length(dt2.Var2)
-        ttt = [ttt;datetime(dt2.Var1(jj)) + duration(dt2.Var2{jj}(1:12))];
-    end
-    
-    fprintf('%d - %s\n',i,subjectsC{i})
-    [IV,IS] = calcIVIS(dt.acc,ttt);
-    
-    IV_c(i,1) = IV;
-    IS_c(i,1) = IS;
-    
-end
+save_path = 'C:\Users\Lara\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Imputation';
 
-IV_comp = nan(length(IV_mask),1);
-IS_comp = nan(length(IS_mask),1);
-for iii = 1:length(subjects)
-    if sum(strcmp(subjects{iii},subjectsC))>0 
-        ind = find(strcmp(subjects{iii},subjectsC),1);
-        IV_comp(iii) = IV_c(ind);
-        IS_comp(iii) = IS_c(ind);
-    end
-end
+save_fn = fullfile(save_path,'impT20211019.mat');
 
-T = table(subjects,days,hrsmiss,IV_comp,IV_mask,IV_imp,IV_mimp,IS_comp,IS_mask,IS_imp,IS_mimp);
+save(save_fn,'T')
+
+%%
+figure
+ax(1) = subplot(1,3,1);
+boxplot([sqrt((T.IV_mask -T.IV_comp).^2)],T.Dur)
+title('Mask')
+ylabel('IV RMSE')
+ax(2) = subplot(1,3,2);
+boxplot([sqrt((T.IV_imp -T.IV_comp).^2)],T.Dur)
+title('Imp')
+xlabel('Gap Duration')
+ax(3) = subplot(1,3,3);
+boxplot([sqrt((T.IV_mimp -T.IV_comp).^2)],T.Dur)
+title('Mean Imp')
+linkaxes(ax,'xy')
+
+figure
+ax(1) = subplot(1,3,1);
+boxplot([sqrt((T.IS_mask -T.IS_comp).^2)],T.Dur)
+title('Mask')
+ylabel('IS RMSE')
+ax(2) = subplot(1,3,2);
+boxplot([sqrt((T.IS_imp -T.IS_comp).^2)],T.Dur)
+title('Imp')
+xlabel('Gap Duration')
+ax(3) = subplot(1,3,3);
+boxplot([sqrt((T.IS_mimp -T.IS_comp).^2)],T.Dur)
+title('Mean Imp')
+linkaxes(ax,'xy')
+
+
+
+figure
+ax(1) = subplot(1,3,1);
+boxplot([sqrt((T.IV_mask -T.IV_comp).^2)],T.StartHr)
+title('Mask')
+ylabel('IV RMSE')
+ax(2) = subplot(1,3,2);
+boxplot([sqrt((T.IV_imp -T.IV_comp).^2)],T.StartHr)
+title('Imp')
+xlabel('Start Hour')
+ax(3) = subplot(1,3,3);
+boxplot([sqrt((T.IV_mimp -T.IV_comp).^2)],T.StartHr)
+title('Mean Imp')
+linkaxes(ax,'xy')
+
+figure
+ax(1) = subplot(1,3,1);
+boxplot([sqrt((T.IS_mask -T.IS_comp).^2)],T.StartHr)
+title('Mask')
+ylabel('IS RMSE')
+ax(2) = subplot(1,3,2);
+boxplot([sqrt((T.IS_imp -T.IS_comp).^2)],T.StartHr)
+title('Imp')
+xlabel('Start Hour')
+ax(3) = subplot(1,3,3);
+boxplot([sqrt((T.IS_mimp -T.IS_comp).^2)],T.StartHr)
+title('Mean Imp')
+linkaxes(ax,'xy')
+
 
 
 
