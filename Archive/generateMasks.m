@@ -26,7 +26,7 @@ for i = 1:length(subjects)
         dur = [];
         
         n = 1;
-        for j = [4,7] %1:length(dayNum) % day of week
+        for j = 1:length(dayNum) % day of week
             fprintf('    Day %d\n',j)
             for k = 0:2:24 % Start time
                 for q = 1:2:24 % duration 
@@ -56,7 +56,7 @@ for i = 1:length(subjects)
 %          ylim([0 2500])
 end
 
-save_fn = 'C:\Users\Lara\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Masks\masksWedSat2-2.mat';
+save_fn = 'C:\Users\Lara\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Masks\masksAllt2-2.mat';
 save(save_fn, 'masks') 
 
 

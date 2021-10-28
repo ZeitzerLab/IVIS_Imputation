@@ -1,7 +1,7 @@
 %% Bland ALtman plots
 
 %% Load Data
-load('C:\Users\Lara\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Imputation\impT20211022.mat')
+load('C:\Users\Lara\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Imputation\impT20211028.mat')
 
 %%
 Days = unique(T.Day);
@@ -9,23 +9,26 @@ Durs = unique(T.Dur);
 Starts = unique(T.StartHr);
 
 for i = 1:length(Days)
-    iIV = [];
+    linIV = [];
     miIV = [];
-    iIS = [];
+    linIS = [];
     miIS = [];
     maskIV = [];
     maskIS = [];
+    mediIV = [];
+    mediIS = [];
     for j = 1:length(Starts)
         for k = 1:length(Durs)
             ind = T.Day == Days(i) & T.Dur == Durs(k) & T.StartHr == Starts(j);
             
-            iIV(k,j) = nanmean(T.IV_imp(ind))-nanmean(T.IV_comp(ind));
+            linIV(k,j) = nanmean(T.IV_linimp(ind))-nanmean(T.IV_comp(ind));
             miIV(k,j) = nanmean(T.IV_mimp(ind))-nanmean(T.IV_comp(ind));
-            iIS(k,j) = nanmean(T.IS_imp(ind))-nanmean(T.IS_comp(ind));
+            linIS(k,j) = nanmean(T.IS_linimp(ind))-nanmean(T.IS_comp(ind));
             miIS(k,j) = nanmean(T.IS_mimp(ind))-nanmean(T.IS_comp(ind));
-
             maskIV(k,j) = nanmean(T.IV_mask(ind))-nanmean(T.IV_comp(ind));
             maskIS(k,j) = nanmean(T.IS_mask(ind))-nanmean(T.IS_comp(ind));
+            mediIV(k,j) = nanmean(T.IV_medimp(ind))-nanmean(T.IV_comp(ind));
+            mediIS(k,j) = nanmean(T.IS_medimp(ind))-nanmean(T.IS_comp(ind));
             
 %             iIV(k,j) = nanmean(T.IV_imp(ind) - T.IV_mask(ind));
 %             miIV(k,j) = nanmean(T.IV_mimp(ind)- T.IV_mask(ind));
@@ -38,8 +41,8 @@ for i = 1:length(Days)
             
         end
     end
-    iv_mm = max(abs([min(min(iIV)),max(max(iIV)),min(min(miIV)),max(max(miIV)),min(min(maskIV)),max(max(maskIV))]));
-    is_mm = max(abs([min(min(iIS)),max(max(iIS)),min(min(miIS)),max(max(miIS)),min(min(maskIS)),max(max(maskIS))]));
+    iv_mm = max(abs([min(min(linIV)),max(max(linIV)),min(min(miIV)),max(max(miIV)),min(min(maskIV)),max(max(maskIV)),min(min(mediIV)),max(max(mediIV))]));
+    is_mm = max(abs([min(min(linIS)),max(max(linIS)),min(min(miIS)),max(max(miIS)),min(min(maskIS)),max(max(maskIS)),min(min(mediIS)),max(max(mediIS))]));
     
     %iv_ma = 0.002;
     %is_ma = 0.022;
@@ -48,8 +51,8 @@ for i = 1:length(Days)
     %max(max(abs(maskIV)))
     
     figure('Renderer', 'painters', 'Position', [100 100 800 400])
-    subplot(1,3,1)
-    h1 = heatmap(iIV,'ColorLimits',[-iv_mm iv_mm],'Colormap',jet);
+    subplot(1,4,1)
+    h1 = heatmap(linIV,'ColorLimits',[-iv_mm iv_mm],'Colormap',jet);
     h1.NodeChildren(3).YDir='normal';
     ax = gca;
     ax.XDisplayLabels = num2cell(Starts);
@@ -58,9 +61,9 @@ for i = 1:length(Days)
     xlabel('Start Time')
     %xticks(Durs)
     ylabel('Duration')
-    title(sprintf(' Graph Imputation IV - Day %d',Days(i)))
+    title(sprintf('Lin Imputation IV - Day %d',Days(i)))
 
-    subplot(1,3,2)
+    subplot(1,4,2)
     h2 = heatmap(miIV,'ColorLimits',[-iv_mm iv_mm],'Colormap',jet);
     h2.NodeChildren(3).YDir='normal';
     ax = gca;
@@ -72,9 +75,21 @@ for i = 1:length(Days)
     ylabel('Duration')
     title(sprintf('Mean Imputation IV - Day %d',Days(i)))
     
-    subplot(1,3,3)
-    h3 = heatmap(maskIV,'ColorLimits',[-iv_mm iv_mm],'Colormap',jet);
+    subplot(1,4,3)
+    h3 = heatmap(mediIV,'ColorLimits',[-iv_mm iv_mm],'Colormap',jet);
     h3.NodeChildren(3).YDir='normal';
+    ax = gca;
+    ax.XDisplayLabels = num2cell(Starts);
+    ax.YDisplayLabels = num2cell(Durs);
+    %xticks(Starts)
+    xlabel('Start Time')
+    %xticks(Durs)
+    ylabel('Duration')
+    title(sprintf('Median Imputation IV - Day %d',Days(i)))
+    
+    subplot(1,4,4)
+    h4 = heatmap(maskIV,'ColorLimits',[-iv_mm iv_mm],'Colormap',jet);
+    h4.NodeChildren(3).YDir='normal';
     ax = gca;
     ax.XDisplayLabels = num2cell(Starts);
     ax.YDisplayLabels = num2cell(Durs);
@@ -86,9 +101,9 @@ for i = 1:length(Days)
     
     %%
     figure('Renderer', 'painters', 'Position', [100 100 800 400])
-    subplot(1,3,1)
-    h4 = heatmap(iIS,'ColorLimits',[-is_mm is_mm],'Colormap',jet);
-    h4.NodeChildren(3).YDir='normal';
+    subplot(1,4,1)
+    h5 = heatmap(linIS,'ColorLimits',[-is_mm is_mm],'Colormap',jet);
+    h5.NodeChildren(3).YDir='normal';
     ax = gca;
     ax.XDisplayLabels = num2cell(Starts);
     ax.YDisplayLabels = num2cell(Durs);
@@ -96,11 +111,11 @@ for i = 1:length(Days)
     xlabel('Start Time')
     %xticks(Durs)
     ylabel('Duration')
-    title(sprintf('Graph Imputation IS - Day %d',Days(i)))
+    title(sprintf('Lin Imputation IS - Day %d',Days(i)))
 
-    subplot(1,3,2)
-    h5 = heatmap(miIS,'ColorLimits',[-is_mm is_mm],'Colormap',jet);
-    h5.NodeChildren(3).YDir='normal';
+    subplot(1,4,2)
+    h6 = heatmap(miIS,'ColorLimits',[-is_mm is_mm],'Colormap',jet);
+    h6.NodeChildren(3).YDir='normal';
     ax = gca;
     ax.XDisplayLabels = num2cell(Starts);
     ax.YDisplayLabels = num2cell(Durs);
@@ -110,7 +125,19 @@ for i = 1:length(Days)
     ylabel('Duration')
     title(sprintf('Mean Imputation IS - Day %d',Days(i)))
     
-    subplot(1,3,3)
+    subplot(1,4,3)
+    h7 = heatmap(mediIS,'ColorLimits',[-is_mm is_mm],'Colormap',jet);
+    h7.NodeChildren(3).YDir='normal';
+    ax = gca;
+    ax.XDisplayLabels = num2cell(Starts);
+    ax.YDisplayLabels = num2cell(Durs);
+    %xticks(Starts)
+    xlabel('Start Time')
+    %xticks(Durs)
+    ylabel('Duration')
+    title(sprintf('Median Imputation IS - Day %d',Days(i)))
+    
+    subplot(1,4,4)
     h6 = heatmap(maskIS,'ColorLimits',[-is_mm is_mm],'Colormap',jet);
     h6.NodeChildren(3).YDir='normal';
     ax = gca;
@@ -121,31 +148,6 @@ for i = 1:length(Days)
     %xticks(Durs)
     ylabel('Duration')
     title(sprintf('Masked IS - Day %d',Days(i)))
-    
-    %%
-%     figure('Renderer', 'painters', 'Position', [100 100 800 400])
-%     h5 = heatmap(maskIV);%,'ColorLimits',[-iv_ma 0],'Colormap',hsv);
-%     h5.NodeChildren(3).YDir='normal';
-%     ax = gca;
-%     ax.XDisplayLabels = num2cell(Starts);
-%     ax.YDisplayLabels = num2cell(Durs);
-%     %xticks(Starts)
-%     xlabel('Start Time')
-%     %xticks(Durs)
-%     ylabel('Duration')
-%     title(sprintf('maskedIV vs complete - Day %d',Days(i)))
-% 
-%     figure('Renderer', 'painters', 'Position', [100 100 800 400])
-%     h6 = heatmap(maskIS);%,'ColorLimits',[-is_ma is_ma],'Colormap',hsv);
-%     h6.NodeChildren(3).YDir='normal';
-%     ax = gca;
-%     ax.XDisplayLabels = num2cell(Starts);
-%     ax.YDisplayLabels = num2cell(Durs);
-%     %xticks(Starts)
-%     xlabel('Start Time')
-%     %xticks(Durs)
-%     ylabel('Duration')
-%     title(sprintf('maskedIS vs complete - Day %d',Days(i)))
 
     
 end
