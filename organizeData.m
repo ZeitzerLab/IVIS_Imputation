@@ -3,7 +3,7 @@
 
 %% Load Data
 % Complete Data
-dpathC = 'C:\Users\Laraw\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\raw\ukbb_complete';
+dpathC = 'C:\Users\Lara\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\raw\ukbb_complete';
 ddpathC = dir(dpathC);
 fnC = {ddpathC.name}';
 fnC = fnC(3:end);

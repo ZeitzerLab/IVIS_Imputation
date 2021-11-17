@@ -6,7 +6,7 @@
 load('C:\Users\Lara\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Organized\dataOrganized.mat')
 
 % Masks
-load('C:\Users\Lara\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Masks\masksAllt2-2.mat')
+load('C:\Users\Lara\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Masks\masks2gapSweep_20211104_2.mat')
 
 %% Loop
 
@@ -14,11 +14,9 @@ load('C:\Users\Lara\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Masks\masksAl
 Subject = []; 
 Day = [];
 StartHr = [];
-Dur = [];
+Spacing = [];
 IV_mask = [];
 IS_mask = [];
-%IV_imp = [];
-%IS_imp = [];
 IV_mimp = [];
 IS_mimp = [];
 IV_comp = [];
@@ -37,9 +35,6 @@ parfor i = 1:length(subjects)
     act_full = data.(subjects{i}).acc;
     t = data.(subjects{i}).t;
     
-    % Generate full Adjacency Matrix
-%     [Adj,nl] = genAccNet(act_full,t);
-    
     % Calculate IVIS
     [IV_comp1,IS_comp1] = calcIVIS(act_full,t);
     
@@ -48,30 +43,18 @@ parfor i = 1:length(subjects)
         %clear act
         %try
             %% -------------------------- Apply Mask --------------------------- %%
-            if ~isnan(m.start_ind(j)) && ~isnan(m.end_ind(j))
-                %% -------------------- Generate Network Graph --------------------- %%    
-                % Remove connections of Adj Matrix corresponding to gaps
-%                 extraConn = act_full(m.start_ind(j):m.end_ind(j));
-%                 Adj_m = Adj;
-%                 for kk = 2:length(extraConn)
-%                     a = find(nl == extraConn(kk-1));
-%                     b = find(nl == extraConn(kk));
-%                     Adj_m(a,b) = Adj_m(a,b) - 1;
-%                 end
-                
-                
+            if ~isnan(m.start_ind1(j)) && ~isnan(m.end_ind1(j)) && ~isnan(m.start_ind2(j)) && ~isnan(m.end_ind2(j))
+                               
                 %% ----------------------- Compute Imputation ---------------------- %%
                 act = act_full;
-                act(m.start_ind(j):m.end_ind(j)) = 0;
-                if m.start_ind(j)>1
-                    gaps = [m.start_ind(j)-1,m.end_ind(j)];
+                act(m.start_ind1(j):m.end_ind1(j)) = 0;
+                act(m.start_ind2(j):m.end_ind2(j)) = 0;
+                if m.start_ind1(j)>1
+                    gaps = [m.start_ind1(j)-1,m.end_ind1(j);m.start_ind2(j)-1,m.end_ind2(j)];
                 else
-                    gaps = [m.start_ind(j),m.end_ind(j)];
+                    gaps = [m.start_ind1(j),m.end_ind1(j);m.start_ind2(j)-1,m.end_ind2(j)];
                 end
-                
-%                 % Graph Imputation
-%                 imputed = graphImputation(act,gaps,Adj,nl,6); % 6 becuase 6 oother days are used in the mean imputation
-                
+                            
                 % Imputation
                 medianimputed = medianImputation(act,t,gaps);
                 meanimputed = meanImputation(act,t,gaps);
@@ -79,19 +62,16 @@ parfor i = 1:length(subjects)
 
                 %% ------------------------- Calculate IVIS ------------------------ %%
                 [IV_mask1,IS_mask1] = calcIVIS(act,t);
-%                 [IV_imp1,IS_imp1] = calcIVIS(imputed,t);
                 [IV_meanimp,IS_meanimp] = calcIVIS(meanimputed,t);
                 [IV_medianimp,IS_medianimp] = calcIVIS(medianimputed,t);
                 [IV_liimp,IS_liimp] = calcIVIS(linInterpimputed,t);
 
                 Subject = [Subject;subjects(i)]; 
-                Day = [Day;m.day(j)];
-                StartHr = [StartHr;m.startHr(j)];
-                Dur = [Dur;m.dur(j)];
+                Day = [Day;m.day1(j)];
+                StartHr = [StartHr;m.startHr1(j)];
+                Spacing = [Spacing;m.spacing(j)];
                 IV_mask = [IV_mask; IV_mask1];
                 IS_mask = [IS_mask; IS_mask1];
-%                 IV_imp = [IV_imp; IV_imp1];
-%                 IS_imp = [IS_imp; IS_imp1];
                 IV_mimp = [IV_mimp;IV_meanimp];
                 IS_mimp = [IS_mimp;IS_meanimp];
                 IV_medimp = [IV_medimp;IV_medianimp];
@@ -107,15 +87,11 @@ parfor i = 1:length(subjects)
     end   
 end
 
-T = table(Subject,Day,StartHr,Dur,IV_comp,IV_mask,IV_mimp,IV_medimp,IV_linimp,IS_comp,IS_mask,IS_mimp,IS_medimp,IS_linimp);
+%% ----------------------------- Save Table ---------------------------- %%
+T = table(Subject,Day,StartHr,Spacing,IV_comp,IV_mask,IV_mimp,IV_medimp,IV_linimp,IS_comp,IS_mask,IS_mimp,IS_medimp,IS_linimp);
 
 save_path = 'C:\Users\Lara\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Imputation';
 
-save_fn = fullfile(save_path,'impT20211112.mat');
+save_fn = fullfile(save_path,'impTmult20211112.mat');
 
 save(save_fn,'T')
-
-
-
-
-

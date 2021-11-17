@@ -20,15 +20,15 @@ for i = 1:length(subjects)
     act = data.(subjects{i}).acc;
     t =  data.(subjects{i}).t;
     
-    % Data must be a week long 
-    if t(end) - t(1) == duration(167,59,00)
+    % Data must be a week long and the first collection from a subject 
+    if t(end) - t(1) == duration(167,59,00) && strcmp(subjects{i}(end-2:end),'0_0')
         hrs = hour(t);
         dayNum = weekday(t);
         
         for j = 1:7 % day of week
             fprintf('    Day %d\n',j)
-            for k = 0:2:24 % Start time
-                for q = 1:2:24 % duration 
+            for k = 0:2:24%[8,12,18]% 0:2:24 % Start time
+                for q = 1:2:24%[115/60,140/60]   %1:2:24 % duration 
                     day_ind = dayNum == j;
                     s_ind = find(day_ind & hrs==k,1);
                     if isempty(s_ind)
@@ -36,12 +36,12 @@ for i = 1:length(subjects)
                     end
                         
                     if k + q < 24
-                        e_ind = find(day_ind & hrs==k+q,1,'last');  
+                        e_ind = find(day_ind & hrs<=k+q,1,'last');  
                         if isempty(e_ind)
                             e_ind = nan;
                         end
                     else
-                        e_ind = find(dayNum == j+1 & hrs==k+q-24,1,'last'); 
+                        e_ind = find(dayNum == j+1 & hrs<=k+q-24,1,'last'); 
                         if isempty(e_ind)
                             e_ind = nan;
                         end

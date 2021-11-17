@@ -1,11 +1,13 @@
 %% Bland ALtman plots
 
 %% Load Data
-load('C:\Users\Lara\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Imputation\impT20211112.mat')
+if exist('T','var') == 0
+    load('C:\Users\Lara\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Imputation\impTmult20211112.mat')
+end
 
 %%
 Days = unique(T.Day);
-Durs = unique(T.Dur);
+Spacing = unique(T.Spacing);
 Starts = unique(T.StartHr);
 
 for i = 1:length(Days)
@@ -18,8 +20,8 @@ for i = 1:length(Days)
     mediIV = [];
     mediIS = [];
     for j = 1:length(Starts)
-        for k = 1:length(Durs)
-            ind = T.Day == Days(i) & T.Dur == Durs(k) & T.StartHr == Starts(j);
+        for k = 1:length(Spacing)
+            ind = T.Day == Days(i) & T.Spacing == Spacing(k) & T.StartHr == Starts(j);
             
             linIV(k,j) = nanmean(T.IV_linimp(ind)-T.IV_comp(ind));
             miIV(k,j) = nanmean(T.IV_mimp(ind)-T.IV_comp(ind));
@@ -43,12 +45,9 @@ for i = 1:length(Days)
     end
     %iv_mm = max(abs([min(min(linIV)),max(max(linIV)),min(min(miIV)),max(max(miIV)),min(min(maskIV)),max(max(maskIV)),min(min(mediIV)),max(max(mediIV))]))
     %is_mm = max(abs([min(min(linIS)),max(max(linIS)),min(min(miIS)),max(max(miIS)),min(min(maskIS)),max(max(maskIS)),min(min(mediIS)),max(max(mediIS))]))
-    
-    iv_mm = 0.30;
-    is_mm = 0.17;
-    
-    %max(max(abs(maskIS)))
-    %max(max(abs(maskIV)))
+
+    iv_mm = 0.10;
+    is_mm = 0.06;
     
     figure('Renderer', 'painters', 'Position', [100 100 800 400])
     subplot(1,4,1)
@@ -56,11 +55,11 @@ for i = 1:length(Days)
     h1.NodeChildren(3).YDir='normal';
     ax = gca;
     ax.XDisplayLabels = num2cell(Starts);
-    ax.YDisplayLabels = num2cell(Durs);
+    ax.YDisplayLabels = num2cell(Spacing);
     %xticks(Starts)
     xlabel('Start Time')
     %xticks(Durs)
-    ylabel('Duration')
+    ylabel('Spacing')
     title(sprintf('Lin Imputation IV - Day %d',Days(i)))
 
     subplot(1,4,2)
@@ -68,11 +67,11 @@ for i = 1:length(Days)
     h2.NodeChildren(3).YDir='normal';
     ax = gca;
     ax.XDisplayLabels = num2cell(Starts);
-    ax.YDisplayLabels = num2cell(Durs);
+    ax.YDisplayLabels = num2cell(Spacing);
     %xticks(Starts)
     xlabel('Start Time')
     %xticks(Durs)
-    ylabel('Duration')
+    ylabel('Spacing')
     title(sprintf('Mean Imputation IV - Day %d',Days(i)))
     
     subplot(1,4,3)
@@ -80,11 +79,11 @@ for i = 1:length(Days)
     h3.NodeChildren(3).YDir='normal';
     ax = gca;
     ax.XDisplayLabels = num2cell(Starts);
-    ax.YDisplayLabels = num2cell(Durs);
+    ax.YDisplayLabels = num2cell(Spacing);
     %xticks(Starts)
     xlabel('Start Time')
     %xticks(Durs)
-    ylabel('Duration')
+    ylabel('Spacing')
     title(sprintf('Median Imputation IV - Day %d',Days(i)))
     
     subplot(1,4,4)
@@ -92,11 +91,11 @@ for i = 1:length(Days)
     h4.NodeChildren(3).YDir='normal';
     ax = gca;
     ax.XDisplayLabels = num2cell(Starts);
-    ax.YDisplayLabels = num2cell(Durs);
+    ax.YDisplayLabels = num2cell(Spacing);
     %xticks(Starts)
     xlabel('Start Time')
     %xticks(Durs)
-    ylabel('Duration')
+    ylabel('Spacing')
     title(sprintf('Masked IV - Day %d',Days(i)))
     
     %%
@@ -106,11 +105,11 @@ for i = 1:length(Days)
     h5.NodeChildren(3).YDir='normal';
     ax = gca;
     ax.XDisplayLabels = num2cell(Starts);
-    ax.YDisplayLabels = num2cell(Durs);
+    ax.YDisplayLabels = num2cell(Spacing);
     %xticks(Starts)
     xlabel('Start Time')
     %xticks(Durs)
-    ylabel('Duration')
+    ylabel('Spacing')
     title(sprintf('Lin Imputation IS - Day %d',Days(i)))
 
     subplot(1,4,2)
@@ -118,11 +117,11 @@ for i = 1:length(Days)
     h6.NodeChildren(3).YDir='normal';
     ax = gca;
     ax.XDisplayLabels = num2cell(Starts);
-    ax.YDisplayLabels = num2cell(Durs);
+    ax.YDisplayLabels = num2cell(Spacing);
     %xticks(Starts)
     xlabel('Start Time')
     %xticks(Durs)
-    ylabel('Duration')
+    ylabel('Spacing')
     title(sprintf('Mean Imputation IS - Day %d',Days(i)))
     
     subplot(1,4,3)
@@ -130,11 +129,11 @@ for i = 1:length(Days)
     h7.NodeChildren(3).YDir='normal';
     ax = gca;
     ax.XDisplayLabels = num2cell(Starts);
-    ax.YDisplayLabels = num2cell(Durs);
+    ax.YDisplayLabels = num2cell(Spacing);
     %xticks(Starts)
     xlabel('Start Time')
     %xticks(Durs)
-    ylabel('Duration')
+    ylabel('Spacing')
     title(sprintf('Median Imputation IS - Day %d',Days(i)))
     
     subplot(1,4,4)
@@ -142,11 +141,11 @@ for i = 1:length(Days)
     h6.NodeChildren(3).YDir='normal';
     ax = gca;
     ax.XDisplayLabels = num2cell(Starts);
-    ax.YDisplayLabels = num2cell(Durs);
+    ax.YDisplayLabels = num2cell(Spacing);
     %xticks(Starts)
     xlabel('Start Time')
     %xticks(Durs)
-    ylabel('Duration')
+    ylabel('Spacing')
     title(sprintf('Masked IS - Day %d',Days(i)))
 
     
