@@ -23,14 +23,14 @@ for i = 1:length(Days)
         for k = 1:length(Spacing)
             ind = T.Day == Days(i) & T.Spacing == Spacing(k) & T.StartHr == Starts(j);
             
-            linIV(k,j) = nanstd(T.IV_linimp(ind)-T.IV_comp(ind));
-            miIV(k,j) = nanstd(T.IV_mimp(ind)-T.IV_comp(ind));
-            linIS(k,j) = nanstd(T.IS_linimp(ind)-T.IS_comp(ind));
-            miIS(k,j) = nanstd(T.IS_mimp(ind)-T.IS_comp(ind));
-            maskIV(k,j) = nanstd(T.IV_mask(ind)-T.IV_comp(ind));
-            maskIS(k,j) = nanstd(T.IS_mask(ind)-T.IS_comp(ind));
-            mediIV(k,j) = nanstd(T.IV_medimp(ind)-T.IV_comp(ind));
-            mediIS(k,j) = nanstd(T.IS_medimp(ind)-T.IS_comp(ind));
+            linIV(k,j) = 1.96*nanstd(T.IV_linimp(ind)-T.IV_comp(ind));
+            miIV(k,j) = 1.96*nanstd(T.IV_mimp(ind)-T.IV_comp(ind));
+            linIS(k,j) = 1.96*nanstd(T.IS_linimp(ind)-T.IS_comp(ind));
+            miIS(k,j) = 1.96*nanstd(T.IS_mimp(ind)-T.IS_comp(ind));
+            maskIV(k,j) = 1.96*nanstd(T.IV_mask(ind)-T.IV_comp(ind));
+            maskIS(k,j) = 1.96*nanstd(T.IS_mask(ind)-T.IS_comp(ind));
+            mediIV(k,j) = 1.96*nanstd(T.IV_medimp(ind)-T.IV_comp(ind));
+            mediIS(k,j) = 1.96*nanstd(T.IS_medimp(ind)-T.IS_comp(ind));
             
 %             iIV(k,j) = nanmean(T.IV_imp(ind) - T.IV_mask(ind));
 %             miIV(k,j) = nanmean(T.IV_mimp(ind)- T.IV_mask(ind));
@@ -49,9 +49,9 @@ for i = 1:length(Days)
 %     is_mm_l = min(abs([min(min(linIS)),max(max(linIS)),min(min(miIS)),max(max(miIS)),min(min(maskIS)),max(max(maskIS)),min(min(mediIS)),max(max(mediIS))]))
 %     
 
-     iv_mm = 0.16;
+     iv_mm = 1.96*0.16;
      iv_mm_l = 0;
-     is_mm = 0.06;
+     is_mm = 1.96*0.06;
      is_mm_l = 0;
     
     %max(max(abs(maskIS)))

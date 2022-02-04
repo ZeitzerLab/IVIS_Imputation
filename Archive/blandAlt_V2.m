@@ -50,7 +50,7 @@ for i = 1:length(Days)
     %max(max(abs(maskIS)))
     %max(max(abs(maskIV)))
     
-    figure('Renderer', 'painters', 'Position', [100 100 800 400])
+    figure('Renderer', 'painters', 'Position', [100 500 800 400])
     subplot(1,4,1)
     h1 = heatmap(linIV,'ColorLimits',[-iv_mm iv_mm],'Colormap',jet);
     h1.NodeChildren(3).YDir='normal';
@@ -100,7 +100,7 @@ for i = 1:length(Days)
     title(sprintf('Masked IV - Day %d',Days(i)))
     
     %%
-    figure('Renderer', 'painters', 'Position', [100 100 800 400])
+    figure('Renderer', 'painters', 'Position', [1000 500 800 400])
     subplot(1,4,1)
     h5 = heatmap(linIS,'ColorLimits',[-is_mm is_mm],'Colormap',jet);
     h5.NodeChildren(3).YDir='normal';
