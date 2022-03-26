@@ -26,7 +26,7 @@ parfor i = 1:length(subjects)
     t =  data.(subjects{i}).t;
     
     % Data must be a week long and the first collection from a subject 
-    if t(end) - t(1) == duration(167,59,00) && strcmp(subjects{i}(end-2:end),'0_0')
+    if t(end) - t(1) == duration(167,59,00) && (strcmp(subjects{i}(end-2:end),'0_0') || strcmp(subjects{i}(end-2:end),'4_0'))
         hrs = hour(t);
         dayNum = weekday(t);
         
@@ -100,7 +100,7 @@ end
 
 masks = table(subject,spacing,day1,dur1,startHr1,start_ind1,end_ind1,day2,dur2,startHr2,start_ind2,end_ind2);
 masks = rmmissing(masks);
-save_fn = 'C:\Users\Lara\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Masks\masks2gapSweep_20211104_2.mat';
+save_fn = 'C:\Users\Lara\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Masks\masks2gapSweep_20220318.mat';
 save(save_fn, 'masks') 
 
 

@@ -10,14 +10,54 @@ isPlot_IS = 1;
     
 days_plot = 1;
 
+%% Plot features
 fontsize = 12;
 xrot = 0;
 yspacing = 3;
+sp_height = .275;
+sp_width = 0.18;
 
+sp_rbot = 0.075;
+sp_rmid = 0.375;
+sp_rtop = 0.675;
+
+offset = 0.075;
+space = 0.20;
+bump = 0.03;
+sp_c1 = offset;
+sp_c2 = space + offset;
+sp_c3 = 2*space +  offset;
+sp_c4 = 3*space +  offset + bump;
+
+pos1 = [sp_c1 sp_rtop sp_width sp_height];
+pos2 = [sp_c2 sp_rtop sp_width sp_height];
+pos3 = [sp_c3 sp_rtop sp_width sp_height];
+pos4 = [sp_c4 sp_rtop sp_width sp_height];
+
+pos5 = [sp_c1 sp_rmid sp_width sp_height];
+pos6 = [sp_c2 sp_rmid sp_width sp_height];
+pos7 = [sp_c3 sp_rmid sp_width sp_height];
+pos8 = [sp_c4 sp_rmid sp_width sp_height];
+
+pos9 = [sp_c1 sp_rbot sp_width sp_height];
+pos10 = [sp_c2 sp_rbot sp_width sp_height];
+pos11 = [sp_c3 sp_rbot sp_width sp_height];
+pos12 = [sp_c4 sp_rbot sp_width sp_height];
+
+S = [{'S6019666_90001_0_0';'S6019821_90001_0_0';'S6020523_90001_0_0';'S6020813_90001_0_0';'S6020965_90001_0_0';'S6021269_90001_0_0';'S6021609_90001_0_0'}];
 
 %% Single Gap
 if isSing
-    load('C:\Users\Laraw\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Imputation\impT20211112.mat')
+    load('C:\Users\Lara\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Imputation\impT20220318.mat')
+    
+    ind_s = ones( length(T.Subject),1); 
+    for sss = 1:length(S)
+        iii = strcmp(T.Subject,S{sss});
+        ind_s(iii) = 0;
+    end
+    ind_s = logical(ind_s);
+    
+    T = T(ind_s,:);
 
     Days = unique(T.Day);
     Durs = unique(T.Dur);
@@ -163,7 +203,7 @@ if isSing
             figure('Renderer', 'painters', 'Position', [100 100 800 800],'Name','IV - Single Gap')
             % Mean
             iv_mm = 0.30;
-            subplot(3,4,1)
+            subplot('Position',pos1)
             h1 = heatmap(linIV,'ColorLimits',[-iv_mm iv_mm],'Colormap',jet);
             h1.NodeChildren(3).YDir='normal';
             h1.ColorbarVisible = 'off';
@@ -173,55 +213,55 @@ if isSing
             ax.YDisplayLabels = CustomYLabels;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             s = struct(h1);
             s.XAxis.TickLabelRotation = xrot;
             ylabel('Duration [hr]')
             title('Linear')
             set(gca,'FontSize',fontsize)
 
-            subplot(3,4,2)
+            subplot('Position',pos2)
             h2 = heatmap(miIV,'ColorLimits',[-iv_mm iv_mm],'Colormap',jet);
             h2.NodeChildren(3).YDir='normal';
             h2.ColorbarVisible = 'off';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Durs);
             CustomYLabels(mod([2:length(Durs)+1],2) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));% CustomYLabels;
             title('Mean')
             set(gca,'FontSize',fontsize)
             s = struct(h2);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,3)
+            subplot('Position',pos3)
             h3 = heatmap(mediIV,'ColorLimits',[-iv_mm iv_mm],'Colormap',jet);
             h3.NodeChildren(3).YDir='normal';
             h3.ColorbarVisible = 'off';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));CustomXLabels;
             CustomYLabels = string(Durs);
             CustomYLabels(mod([2:length(Durs)+1],2) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             title('Median')
             set(gca,'FontSize',fontsize)
             s = struct(h3);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,4)
+            subplot('Position',pos4)
             h4 = heatmap(maskIV,'ColorLimits',[-iv_mm iv_mm],'Colormap',jet);
             h4.NodeChildren(3).YDir='normal';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Durs);
             CustomYLabels(mod([2:length(Durs)+1],2) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             title('Masked')
             set(gca,'FontSize',fontsize)
             s = struct(h4);
@@ -232,14 +272,14 @@ if isSing
             iv_mm = 1.96*0.39;
             iv_mm_l = 0;
 
-            subplot(3,4,5)
+            subplot('Position',pos5)
             h1 = heatmap(linIVstd,'ColorLimits',[iv_mm_l iv_mm],'Colormap',spring);
             h1.NodeChildren(3).YDir='normal';
             h1.ColorbarVisible = 'off';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Durs);
             CustomYLabels(mod([2:length(Durs)+1],2) ~= 0) = " ";
             ax.YDisplayLabels = CustomYLabels;
@@ -248,46 +288,46 @@ if isSing
             s = struct(h1);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,6)
+            subplot('Position',pos6)
             h2 = heatmap(miIVstd,'ColorLimits',[iv_mm_l iv_mm],'Colormap',spring);
             h2.NodeChildren(3).YDir='normal';
             h2.ColorbarVisible = 'off';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Durs);
             CustomYLabels(mod([2:length(Durs)+1],2) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             set(gca,'FontSize',fontsize)
             s = struct(h2);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,7)
+            subplot('Position',pos7)
             h3 = heatmap(mediIVstd,'ColorLimits',[iv_mm_l iv_mm],'Colormap',spring);
             h3.NodeChildren(3).YDir='normal';
             h3.ColorbarVisible = 'off';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Durs);
             CustomYLabels(mod([2:length(Durs)+1],2) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             set(gca,'FontSize',fontsize)
             s = struct(h3);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,8)
+            subplot('Position',pos8)
             h4 = heatmap(maskIVstd,'ColorLimits',[iv_mm_l iv_mm],'Colormap',spring);
             h4.NodeChildren(3).YDir='normal';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Durs);
             CustomYLabels(mod([2:length(Durs)+1],2) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             set(gca,'FontSize',fontsize)
             s = struct(h4);
             s.XAxis.TickLabelRotation = xrot;
@@ -297,7 +337,7 @@ if isSing
             iv_mm = .779;
             iv_mm_l = .016;
 
-            subplot(3,4,9)
+            subplot('Position',pos9)
             h1 = heatmap(linIVslope,'ColorLimits',[iv_mm_l iv_mm],'Colormap',cool);
             h1.NodeChildren(3).YDir='normal';
             h1.ColorbarVisible = 'off';
@@ -314,7 +354,7 @@ if isSing
             s = struct(h1);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,10)
+            subplot('Position',pos10)
             h2 = heatmap(miIVslope,'ColorLimits',[iv_mm_l iv_mm],'Colormap',cool);
             h2.NodeChildren(3).YDir='normal';
             h2.ColorbarVisible = 'off';
@@ -324,13 +364,13 @@ if isSing
             ax.XDisplayLabels = CustomXLabels;
             CustomYLabels = string(Durs);
             CustomYLabels(mod([2:length(Durs)+1],2) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             xlabel('Start Time [hr]')
             set(gca,'FontSize',fontsize)
             s = struct(h2);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,11)
+            subplot('Position',pos11)
             h3 = heatmap(mediIVslope,'ColorLimits',[iv_mm_l iv_mm],'Colormap',cool);
             h3.NodeChildren(3).YDir='normal';
             h3.ColorbarVisible = 'off';
@@ -340,13 +380,13 @@ if isSing
             ax.XDisplayLabels = CustomXLabels;
             CustomYLabels = string(Durs);
             CustomYLabels(mod([2:length(Durs)+1],2) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             xlabel('Start Time [hr]')
             set(gca,'FontSize',fontsize)
             s = struct(h3);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,12)
+            subplot('Position',pos12)
             h4 = heatmap(maskIVslope,'ColorLimits',[iv_mm_l iv_mm],'Colormap',cool);
             h4.NodeChildren(3).YDir='normal';
             ax = gca;
@@ -355,7 +395,7 @@ if isSing
             ax.XDisplayLabels = CustomXLabels;
             CustomYLabels = string(Durs);
             CustomYLabels(mod([2:length(Durs)+1],2) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             xlabel('Start Time [hr]')
             set(gca,'FontSize',fontsize)
             s = struct(h4);
@@ -367,14 +407,14 @@ if isSing
         if isPlot_IS
             is_mm = 0.17;
             figure('Renderer', 'painters', 'Position', [850 100 800 800],'Name','IS - Single Gap')
-            subplot(3,4,1)
+            subplot('Position',pos1)
             h5 = heatmap(linIS,'ColorLimits',[-is_mm is_mm],'Colormap',jet);
             h5.NodeChildren(3).YDir='normal';
             h5.ColorbarVisible = 'off';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Durs);
             CustomYLabels(mod([2:length(Durs)+1],2) ~= 0) = " ";
             ax.YDisplayLabels = CustomYLabels;
@@ -384,48 +424,48 @@ if isSing
             s = struct(h5);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,2)
+            subplot('Position',pos2)
             h6 = heatmap(miIS,'ColorLimits',[-is_mm is_mm],'Colormap',jet);
             h6.NodeChildren(3).YDir='normal';
             h6.ColorbarVisible = 'off';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Durs);
             CustomYLabels(mod([2:length(Durs)+1],2) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             title('Mean')
             set(gca,'FontSize',fontsize)
             s = struct(h6);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,3)
+            subplot('Position',pos3)
             h7 = heatmap(mediIS,'ColorLimits',[-is_mm is_mm],'Colormap',jet);
             h7.NodeChildren(3).YDir='normal';
             h7.ColorbarVisible = 'off';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Durs);
             CustomYLabels(mod([2:length(Durs)+1],2) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             title('Median')
             set(gca,'FontSize',fontsize)
             s = struct(h7);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,4)
+            subplot('Position',pos4)
             h6 = heatmap(maskIS,'ColorLimits',[-is_mm is_mm],'Colormap',jet);
             h6.NodeChildren(3).YDir='normal';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Durs);
             CustomYLabels(mod([2:length(Durs)+1],2) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             title('Masked')
             set(gca,'FontSize',fontsize)
             s = struct(h6);
@@ -434,14 +474,14 @@ if isSing
             % STD
             is_mm = 1.96*0.23;
             is_mm_l = 0;
-            subplot(3,4,5)
+            subplot('Position',pos5)
             h5 = heatmap(linISstd,'ColorLimits',[is_mm_l is_mm],'Colormap',spring);
             h5.NodeChildren(3).YDir='normal';
             h5.ColorbarVisible = 'off';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Durs);
             CustomYLabels(mod([2:length(Durs)+1],2) ~= 0) = " ";
             ax.YDisplayLabels = CustomYLabels;
@@ -450,46 +490,46 @@ if isSing
             s = struct(h5);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,6)
+            subplot('Position',pos6)
             h6 = heatmap(miISstd,'ColorLimits',[is_mm_l is_mm],'Colormap',spring);
             h6.NodeChildren(3).YDir='normal';
             h6.ColorbarVisible = 'off';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Durs);
             CustomYLabels(mod([2:length(Durs)+1],2) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             set(gca,'FontSize',fontsize)
             s = struct(h6);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,7)
+            subplot('Position',pos7)
             h7 = heatmap(mediISstd,'ColorLimits',[is_mm_l is_mm],'Colormap',spring);
             h7.NodeChildren(3).YDir='normal';
             h7.ColorbarVisible = 'off';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Durs);
             CustomYLabels(mod([2:length(Durs)+1],2) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             set(gca,'FontSize',fontsize)
             s = struct(h7);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,8)
+            subplot('Position',pos8)
             h6 = heatmap(maskISstd,'ColorLimits',[is_mm_l is_mm],'Colormap',spring);
             h6.NodeChildren(3).YDir='normal';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Durs);
             CustomYLabels(mod([2:length(Durs)+1],2) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             set(gca,'FontSize',fontsize)
             s = struct(h6);
             s.XAxis.TickLabelRotation = xrot;
@@ -498,7 +538,7 @@ if isSing
             is_mm = .652;
             is_mm_l = 0;
 
-            subplot(3,4,9)
+            subplot('Position',pos9)
             h5 = heatmap(linISslope,'ColorLimits',[is_mm_l is_mm],'Colormap',cool);
             h5.NodeChildren(3).YDir='normal';
             h5.ColorbarVisible = 'off';
@@ -515,7 +555,7 @@ if isSing
             s = struct(h5);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,10)
+            subplot('Position',pos10)
             h6 = heatmap(miISslope,'ColorLimits',[is_mm_l is_mm],'Colormap',cool);
             h6.NodeChildren(3).YDir='normal';
             h6.ColorbarVisible = 'off';
@@ -525,13 +565,13 @@ if isSing
             ax.XDisplayLabels = CustomXLabels;
             CustomYLabels = string(Durs);
             CustomYLabels(mod([2:length(Durs)+1],2) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             xlabel('Start Time [hr]')
             set(gca,'FontSize',fontsize)
             s = struct(h6);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,11)
+            subplot('Position',pos11)
             h7 = heatmap(mediISslope,'ColorLimits',[is_mm_l is_mm],'Colormap',cool);
             h7.NodeChildren(3).YDir='normal';
             h7.ColorbarVisible = 'off';
@@ -541,13 +581,13 @@ if isSing
             ax.XDisplayLabels = CustomXLabels;
             CustomYLabels = string(Durs);
             CustomYLabels(mod([2:length(Durs)+1],2) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             xlabel('Start Time [hr]')
             set(gca,'FontSize',fontsize)
             s = struct(h7);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,12)
+            subplot('Position',pos12)
             h6 = heatmap(maskISslope,'ColorLimits',[is_mm_l is_mm],'Colormap',cool);
             h6.NodeChildren(3).YDir='normal';
             ax = gca;
@@ -556,7 +596,7 @@ if isSing
             ax.XDisplayLabels = CustomXLabels;
             CustomYLabels = string(Durs);
             CustomYLabels(mod([2:length(Durs)+1],2) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             xlabel('Start Time [hr]')
             set(gca,'FontSize',fontsize)
             s = struct(h6);
@@ -570,8 +610,17 @@ end
 %% Mult Gap
 if ismult
     clear T
-    load('C:\Users\Laraw\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Imputation\impTmult20211112.mat')
-
+    load('C:\Users\Laraw\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Imputation\impTmult20220318.mat')
+    
+    ind_s = ones( length(T.Subject),1); 
+    for sss = 1:length(S)
+        iii = strcmp(T.Subject,S{sss});
+        ind_s(iii) = 0;
+    end
+    ind_s = logical(ind_s);
+    
+    T = T(ind_s,:);
+    
     Days = unique(T.Day);
     Spacing = unique(T.Spacing);
     Starts = unique(T.StartHr);
@@ -716,14 +765,14 @@ if ismult
             figure('Renderer', 'painters', 'Position', [100 100 800 800],'Name','IV - Multi Gap')
             % Mean
             iv_mm = 0.30;
-            subplot(3,4,1)
+            subplot('Position',pos1)
             h1 = heatmap(linIV,'ColorLimits',[-iv_mm iv_mm],'Colormap',jet);
             h1.NodeChildren(3).YDir='normal';
             h1.ColorbarVisible = 'off';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Spacing);
             CustomYLabels(mod([2:length(Spacing)+1],yspacing) ~= 0) = " ";
             ax.YDisplayLabels = CustomYLabels;
@@ -733,48 +782,48 @@ if ismult
             s = struct(h1);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,2)
+            subplot('Position',pos2)
             h2 = heatmap(miIV,'ColorLimits',[-iv_mm iv_mm],'Colormap',jet);
             h2.NodeChildren(3).YDir='normal';
             h2.ColorbarVisible = 'off';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Spacing);
             CustomYLabels(mod([2:length(Spacing)+1],yspacing) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             title('Mean')
             set(gca,'FontSize',fontsize)
             s = struct(h2);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,3)
+            subplot('Position',pos3)
             h3 = heatmap(mediIV,'ColorLimits',[-iv_mm iv_mm],'Colormap',jet);
             h3.NodeChildren(3).YDir='normal';
             h3.ColorbarVisible = 'off';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Spacing);
             CustomYLabels(mod([2:length(Spacing)+1],yspacing) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             title('Median')
             set(gca,'FontSize',fontsize)
             s = struct(h3);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,4)
+            subplot('Position',pos4)
             h4 = heatmap(maskIV,'ColorLimits',[-iv_mm iv_mm],'Colormap',jet);
             h4.NodeChildren(3).YDir='normal';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Spacing);
             CustomYLabels(mod([2:length(Spacing)+1],yspacing) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             title('Masked')
             set(gca,'FontSize',fontsize)
             s = struct(h4);
@@ -785,14 +834,14 @@ if ismult
             iv_mm = 1.96*0.39;
             iv_mm_l = 0;
 
-            subplot(3,4,5)
+            subplot('Position',pos5)
             h1 = heatmap(linIVstd,'ColorLimits',[iv_mm_l iv_mm],'Colormap',spring);
             h1.NodeChildren(3).YDir='normal';
             h1.ColorbarVisible = 'off';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Spacing);
             CustomYLabels(mod([2:length(Spacing)+1],yspacing) ~= 0) = " ";
             ax.YDisplayLabels = CustomYLabels;
@@ -801,46 +850,46 @@ if ismult
             s = struct(h1);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,6)
+            subplot('Position',pos6)
             h2 = heatmap(miIVstd,'ColorLimits',[iv_mm_l iv_mm],'Colormap',spring);
             h2.NodeChildren(3).YDir='normal';
             h2.ColorbarVisible = 'off';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Spacing);
             CustomYLabels(mod([2:length(Spacing)+1],yspacing) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             set(gca,'FontSize',fontsize)
             s = struct(h2);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,7)
+            subplot('Position',pos7)
             h3 = heatmap(mediIVstd,'ColorLimits',[iv_mm_l iv_mm],'Colormap',spring);
             h3.NodeChildren(3).YDir='normal';
             h3.ColorbarVisible = 'off';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Spacing);
             CustomYLabels(mod([2:length(Spacing)+1],yspacing) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             set(gca,'FontSize',fontsize)
             s = struct(h3);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,8)
+            subplot('Position',pos8)
             h4 = heatmap(maskIVstd,'ColorLimits',[iv_mm_l iv_mm],'Colormap',spring);
             h4.NodeChildren(3).YDir='normal';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Spacing);
             CustomYLabels(mod([2:length(Spacing)+1],yspacing) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             set(gca,'FontSize',fontsize)
             s = struct(h4);
             s.XAxis.TickLabelRotation = xrot;
@@ -849,7 +898,7 @@ if ismult
             % Slope
             iv_mm = .779;
             iv_mm_l = .016;
-            subplot(3,4,9)
+            subplot('Position',pos9)
             h1 = heatmap(linIVslope,'ColorLimits',[iv_mm_l iv_mm],'Colormap',cool);
             h1.NodeChildren(3).YDir='normal';
             h1.ColorbarVisible = 'off';
@@ -868,7 +917,7 @@ if ismult
             s = struct(h1);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,10)
+            subplot('Position',pos10)
             h2 = heatmap(miIVslope,'ColorLimits',[iv_mm_l iv_mm],'Colormap',cool);
             h2.NodeChildren(3).YDir='normal';
             h2.ColorbarVisible = 'off';
@@ -878,13 +927,13 @@ if ismult
             ax.XDisplayLabels = CustomXLabels;
             CustomYLabels = string(Spacing);
             CustomYLabels(mod([2:length(Spacing)+1],yspacing) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             xlabel('Start Time [hr]')
             set(gca,'FontSize',fontsize)
             s = struct(h2);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,11)
+            subplot('Position',pos11)
             h3 = heatmap(mediIVslope,'ColorLimits',[iv_mm_l iv_mm],'Colormap',cool);
             h3.NodeChildren(3).YDir='normal';
             h3.ColorbarVisible = 'off';
@@ -894,13 +943,13 @@ if ismult
             ax.XDisplayLabels = CustomXLabels;
             CustomYLabels = string(Spacing);
             CustomYLabels(mod([2:length(Spacing)+1],yspacing) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             xlabel('Start Time [hr]')
             set(gca,'FontSize',fontsize)
             s = struct(h3);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,12)
+            subplot('Position',pos12)
             h4 = heatmap(maskIVslope,'ColorLimits',[iv_mm_l iv_mm],'Colormap',cool);
             h4.NodeChildren(3).YDir='normal';
             ax = gca;
@@ -909,7 +958,7 @@ if ismult
             ax.XDisplayLabels = CustomXLabels;
             CustomYLabels = string(Spacing);
             CustomYLabels(mod([2:length(Spacing)+1],yspacing) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             %xticks(Starts)
             xlabel('Start Time [hr]')
             set(gca,'FontSize',fontsize)
@@ -922,14 +971,14 @@ if ismult
         if isPlot_IS
             is_mm = 0.17;
             figure('Renderer', 'painters', 'Position', [850 100 800 800],'Name','IS - Multi Gap')
-            subplot(3,4,1)
+            subplot('Position',pos1)
             h5 = heatmap(linIS,'ColorLimits',[-is_mm is_mm],'Colormap',jet);
             h5.NodeChildren(3).YDir='normal';
             h5.ColorbarVisible = 'off';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Spacing);
             CustomYLabels(mod([2:length(Spacing)+1],yspacing) ~= 0) = " ";
             ax.YDisplayLabels = CustomYLabels;
@@ -939,48 +988,48 @@ if ismult
             s = struct(h5);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,2)
+            subplot('Position',pos2)
             h6 = heatmap(miIS,'ColorLimits',[-is_mm is_mm],'Colormap',jet);
             h6.NodeChildren(3).YDir='normal';
             h6.ColorbarVisible = 'off';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Spacing);
             CustomYLabels(mod([2:length(Spacing)+1],yspacing) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             title('Mean')
             set(gca,'FontSize',fontsize)
             s = struct(h6);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,3)
+            subplot('Position',pos3)
             h7 = heatmap(mediIS,'ColorLimits',[-is_mm is_mm],'Colormap',jet);
             h7.NodeChildren(3).YDir='normal';
             h7.ColorbarVisible = 'off';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Spacing);
             CustomYLabels(mod([2:length(Spacing)+1],yspacing) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             title('Median')
             set(gca,'FontSize',fontsize)
             s = struct(h7);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,4)
+            subplot('Position',pos4)
             h6 = heatmap(maskIS,'ColorLimits',[-is_mm is_mm],'Colormap',jet);
             h6.NodeChildren(3).YDir='normal';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Spacing);
             CustomYLabels(mod([2:length(Spacing)+1],yspacing) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             title('Masked')
             set(gca,'FontSize',fontsize)
             s = struct(h6);
@@ -989,14 +1038,14 @@ if ismult
             % STD
             is_mm = 1.96*0.23;
             is_mm_l = 0;
-            subplot(3,4,5)
+            subplot('Position',pos5)
             h5 = heatmap(linISstd,'ColorLimits',[is_mm_l is_mm],'Colormap',spring);
             h5.NodeChildren(3).YDir='normal';
             h5.ColorbarVisible = 'off';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Spacing);
             CustomYLabels(mod([2:length(Spacing)+1],yspacing) ~= 0) = " ";
             ax.YDisplayLabels = CustomYLabels;
@@ -1005,46 +1054,46 @@ if ismult
             s = struct(h5);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,6)
+            subplot('Position',pos6)
             h6 = heatmap(miISstd,'ColorLimits',[is_mm_l is_mm],'Colormap',spring);
             h6.NodeChildren(3).YDir='normal';
             h6.ColorbarVisible = 'off';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Spacing);
             CustomYLabels(mod([2:length(Spacing)+1],yspacing) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             set(gca,'FontSize',fontsize)
             s = struct(h6);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,7)
+            subplot('Position',pos7)
             h7 = heatmap(mediISstd,'ColorLimits',[is_mm_l is_mm],'Colormap',spring);
             h7.NodeChildren(3).YDir='normal';
             h7.ColorbarVisible = 'off';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Spacing);
             CustomYLabels(mod([2:length(Spacing)+1],yspacing) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             set(gca,'FontSize',fontsize)
             s = struct(h7);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,8)
+            subplot('Position',pos8)
             h6 = heatmap(maskISstd,'ColorLimits',[is_mm_l is_mm],'Colormap',spring);
             h6.NodeChildren(3).YDir='normal';
             ax = gca;
             CustomXLabels = string(Starts);
             CustomXLabels(mod([2:length(Starts)+1],2) ~= 0) = " ";
-            ax.XDisplayLabels = CustomXLabels;
+            ax.XDisplayLabels = nan(size(CustomXLabels));%CustomXLabels;
             CustomYLabels = string(Spacing);
             CustomYLabels(mod([2:length(Spacing)+1],yspacing) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             set(gca,'FontSize',fontsize)
             s = struct(h6);
             s.XAxis.TickLabelRotation = xrot;
@@ -1053,7 +1102,7 @@ if ismult
             is_mm = .652;
             is_mm_l = 0;
 
-            subplot(3,4,9)
+            subplot('Position',pos9)
             h5 = heatmap(linISslope,'ColorLimits',[is_mm_l is_mm],'Colormap',cool);
             h5.NodeChildren(3).YDir='normal';
             h5.ColorbarVisible = 'off';
@@ -1070,7 +1119,7 @@ if ismult
             s = struct(h5);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,10)
+            subplot('Position',pos10)
             h6 = heatmap(miISslope,'ColorLimits',[is_mm_l is_mm],'Colormap',cool);
             h6.NodeChildren(3).YDir='normal';
             h6.ColorbarVisible = 'off';
@@ -1080,13 +1129,13 @@ if ismult
             ax.XDisplayLabels = CustomXLabels;
             CustomYLabels = string(Spacing);
             CustomYLabels(mod([2:length(Spacing)+1],yspacing) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             xlabel('Start Time [hr]')
             set(gca,'FontSize',fontsize)
             s = struct(h6);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,11)
+            subplot('Position',pos11)
             h8 = heatmap(mediISslope,'ColorLimits',[is_mm_l is_mm],'Colormap',cool);
             h8.NodeChildren(3).YDir='normal';
             h8.ColorbarVisible = 'off';
@@ -1096,13 +1145,13 @@ if ismult
             ax.XDisplayLabels = CustomXLabels;
             CustomYLabels = string(Spacing);
             CustomYLabels(mod([2:length(Spacing)+1],yspacing) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             xlabel('Start Time [hr]')
             set(gca,'FontSize',fontsize)
             s = struct(h8);
             s.XAxis.TickLabelRotation = xrot;
 
-            subplot(3,4,12)
+            subplot('Position',pos12)
             h6 = heatmap(maskISslope,'ColorLimits',[is_mm_l is_mm],'Colormap',cool);
             h6.NodeChildren(3).YDir='normal';
             ax = gca;
@@ -1111,7 +1160,7 @@ if ismult
             ax.XDisplayLabels = CustomXLabels;
             CustomYLabels = string(Spacing);
             CustomYLabels(mod([2:length(Spacing)+1],yspacing) ~= 0) = " ";
-            ax.YDisplayLabels = CustomYLabels;
+            ax.YDisplayLabels = nan(size(CustomYLabels));%CustomYLabels;
             xlabel('Start Time [hr]')
             set(gca,'FontSize',fontsize) 
             s = struct(h6);

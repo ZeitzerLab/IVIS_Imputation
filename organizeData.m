@@ -27,3 +27,8 @@ for i = 1:length(fnC)
     data.(strcat('S',subjectsC{i})).acc = dt.acc;    
 end
 
+%%
+save('C:\Users\Lara\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Organized\dataOrganized.mat', 'data')
+
+
+

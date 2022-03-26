@@ -6,7 +6,7 @@
 load('C:\Users\Lara\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Organized\dataOrganized.mat')
 
 % Masks
-load('C:\Users\Lara\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Masks\masks2gapSweep_20211104_2.mat')
+load('C:\Users\Lara\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Masks\masks2gapSweep_20220318.mat')
 
 %% Loop
 
@@ -92,6 +92,6 @@ T = table(Subject,Day,StartHr,Spacing,IV_comp,IV_mask,IV_mimp,IV_medimp,IV_linim
 
 save_path = 'C:\Users\Lara\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Imputation';
 
-save_fn = fullfile(save_path,'impTmult20211112.mat');
+save_fn = fullfile(save_path,'impTmult20220318.mat');
 
 save(save_fn,'T')

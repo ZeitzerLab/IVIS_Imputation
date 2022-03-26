@@ -15,18 +15,20 @@ day = [];
 startHr = [];
 dur = [];
 subject = [];
-for i = 1:length(subjects)
-    fprintf('%d - %s\n',i,subjects{i})
+parfor i = 1:length(subjects)
+    
     act = data.(subjects{i}).acc;
     t =  data.(subjects{i}).t;
     
     % Data must be a week long and the first collection from a subject 
-    if t(end) - t(1) == duration(167,59,00) && strcmp(subjects{i}(end-2:end),'0_0')
+    if t(end) - t(1) == duration(167,59,00) && (strcmp(subjects{i}(end-2:end),'0_0') || strcmp(subjects{i}(end-2:end),'4_0'))
+        fprintf('%d - %s\n',i,subjects{i})
         hrs = hour(t);
         dayNum = weekday(t);
+    
         
         for j = 1:7 % day of week
-            fprintf('    Day %d\n',j)
+            %fprintf('    Day %d\n',j)
             for k = 0:2:24%[8,12,18]% 0:2:24 % Start time
                 for q = 1:2:24%[115/60,140/60]   %1:2:24 % duration 
                     day_ind = dayNum == j;
@@ -56,15 +58,17 @@ for i = 1:length(subjects)
                 end
             end
         end
+    else
+        fprintf('%d - %s - ERROR\n',i,subjects{i})
     end
+end
 
 %          figure
 %          plot(t,act)
 %          ylim([0 2500])
-end
 
 masks = table(subject,day,dur,startHr,start_ind,end_ind);
-save_fn = 'C:\Users\Lara\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Masks\masksAllt2-2.mat';
+save_fn = 'C:\Users\Lara\OneDrive - Stanford\Research\Zeitzer\UKBB\Data\Masks\masksAllt2-20220318.mat';
 save(save_fn, 'masks') 
 
 

@@ -7,7 +7,10 @@ N = length(act);
 p = hours(24)/(t(2)-t(1));
 X_bar = mean(act);
 h_ind = hour(t);%(24*(day(t)-1) + hour(t)) - min((24*(day(t)-1) + hour(t))) + 1;
-hi_ind = (24*(day(t)-1) + hour(t)) - min((24*(day(t)-1) + hour(t))) + 1;
+hi_ind = (24*(day(t)-1) + hour(t)) - ((24*(day(t(1))-1) + hour(t(1)))) + 1;
+if sum(hi_ind<0)>0
+    hi_ind(hi_ind<0) = hi_ind(hi_ind<0)+ hi_ind(find(hi_ind<0,1)-1) - hi_ind(find(hi_ind<0,1)); 
+end
 
 X_i = nan(max(hi_ind),1);
 for h = 1:max(hi_ind)
