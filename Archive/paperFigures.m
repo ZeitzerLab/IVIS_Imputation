@@ -16,11 +16,11 @@ IVIS_mult_path = 'Imputation\impTmult20220318.mat';
 %% Plot Flags
 % main plots
 isplot_exampleImputation = 0;
-isplot_heatmaps = 0; 
-    isSing = 0;
+isplot_heatmaps = 1; 
+    isSing = 1;
     ismult = 1;
 
-    isPlot_IV = 0; 
+    isPlot_IV = 1; 
     isPlot_IS = 1;
     
     days_plot = 1;
@@ -29,32 +29,28 @@ isplot_heatmaps = 0;
 isplot_exampleBlandAltman = 0;
 isplot_starthr = 0;
 isplot_IVISDist = 0;
-isplot_heatmaps_supp = 1;
+isplot_heatmaps_supp = 0;
 
 %% Plot features
 % general features
 fontsize = 12;
 fontsize_letter = 18;
-fontsize_text = 9;
-fontsize_imp = 12;
 linewidth = 1.5;
 xrot = 0;
 yspacing = 3;
 
-% figure sizes
-fs_exampleImputation = [100 100 624 400];
-fs_Heatmap = [100 100 624 300];
-fs_Heatmap_supp = [100 100 624 600];
-fs_BA = [100 100 624 300];
+% 1x4 plots
+fs_exampleImputation = [100 100 1300 600];
+fs_Heatmap = [100 100 1300 400];
+fs_BA = [100 100 1300 400];
 
+sp_height_gen = .7;
+sp_width_gen = 0.19;
+sp_row_gen = 0.2;
 
-sp_height_gen = .65;
-sp_width_gen = 0.18;
-sp_row_gen = 0.25;
-
-offset = 0.1;
+offset = 0.075;
 space = 0.02;
-bump = 0.02;
+bump = 0.03;
 sp_c1 = offset;
 sp_c2 = sp_width_gen + space + offset;
 sp_c3 = 2*(sp_width_gen + space) +  offset;
@@ -83,6 +79,7 @@ is_sl_l = -.45;
 
 
 % 2x4 plots
+fs_Heatmap_supp = [100 100 1300 800];
 
 sp_height_gen = .35;
 sp_bot = 0.1;
@@ -147,7 +144,7 @@ if isplot_exampleImputation
         hold on
         plot(t(ind),act_full(ind),'k','linewidth',linewidth)
         set(gca,'XTick',[])
-        text(t(m.start_ind(j))+hours(2.25), 190, 'Raw','fontweight','bold','fontsize',fontsize_imp)
+        text(t(m.start_ind(j))+hours(2.25), 180, 'Full Data','fontweight','bold','fontsize',fontsize)
         text(t(find(ind,1))+hours(0.25), 180, 'A','fontweight','bold','fontsize',fontsize_letter)
         set(gca,'fontweight','bold','fontsize',fontsize)
         
@@ -156,7 +153,7 @@ if isplot_exampleImputation
         'facealpha',.3,'edgecolor','none', 'basevalue',0);
         hold on
         plot(t(ind),linInterpimputed(ind),'k','linewidth',linewidth)
-        text(t(m.start_ind(j))+hours(1.775), 190, 'Linear','fontweight','bold','fontsize',fontsize_imp)
+        text(t(m.start_ind(j))+hours(1.325), 180, 'Linear Interpolation','fontweight','bold','fontsize',fontsize)
         text(t(find(ind,1))+hours(0.25), 180, 'B','fontweight','bold','fontsize',fontsize_letter)
         set(gca,'XTick',[])
         set(gca,'fontweight','bold','fontsize',fontsize)
@@ -166,7 +163,7 @@ if isplot_exampleImputation
         'facealpha',.3,'edgecolor','none', 'basevalue',0);
         hold on
         plot(t(ind),meanimputed(ind),'k','linewidth',linewidth)
-        text(t(m.start_ind(j))+hours(1.85), 190, 'Mean','fontweight','bold','fontsize',fontsize_imp)
+        text(t(m.start_ind(j))+hours(1.55), 180, 'Mean Imputation','fontweight','bold','fontsize',fontsize)
         text(t(find(ind,1))+hours(0.25), 180, 'C','fontweight','bold','fontsize',fontsize_letter)
         ylabel('                  Activity [Counts]')
         set(gca,'XTick',[])
@@ -177,7 +174,7 @@ if isplot_exampleImputation
         'facealpha',.3,'edgecolor','none', 'basevalue',0);
         hold on
         plot(t(ind),medianimputed(ind),'k','linewidth',linewidth)
-        text(t(m.start_ind(j))+hours(1.45), 190,'Median','fontweight','bold','fontsize',fontsize_imp)
+        text(t(m.start_ind(j))+hours(1.425), 180,'Median Imputation','fontweight','bold','fontsize',fontsize)
         text(t(find(ind,1))+hours(0.25), 180, 'D','fontweight','bold','fontsize',fontsize_letter)
         xlabel('Time [s]')
         %ylabel('Actigraphy')
@@ -252,7 +249,7 @@ if isplot_heatmaps
                 ax.XDisplayLabels = CustomXLabels;
                 s = struct(h1);
                 s.XAxis.TickLabelRotation = xrot;
-                ylabel(sprintf('Duration [hr]'))
+                ylabel(sprintf('Mean\nDuration [hr]'))
                 xlabel('Start Time [hr]')
                 title('Linear')
                 hAx=h1.NodeChildren(3);          % return the heatmap underlying axes handle
@@ -365,7 +362,7 @@ if isplot_heatmaps
                 CustomYLabels = string(Durs);
                 CustomYLabels(mod([2:length(Durs)+1],2) ~= 0) = " ";
                 ax.YDisplayLabels = CustomYLabels;
-                ylabel(sprintf('Duration [hr]'))
+                ylabel(sprintf('Mean\nDuration [hr]'))
                 xlabel('Start Time [hr]')
                 title('Linear')
                 hAx=h5.NodeChildren(3);          % return the heatmap underlying axes handle
@@ -524,7 +521,7 @@ if isplot_heatmaps
                 CustomYLabels = string(Spacing);
                 CustomYLabels(mod([2:length(Spacing)+1],yspacing) ~= 0) = " ";
                 ax.YDisplayLabels = CustomYLabels;
-                ylabel(sprintf('Duration [hr]'))
+                ylabel(sprintf('Mean\nDuration [hr]'))
                 xlabel('Start Time [hr]')
                 title('Linear')
                 hAx=h1.NodeChildren(3);          % return the heatmap underlying axes handle
@@ -637,7 +634,7 @@ if isplot_heatmaps
                 CustomYLabels = string(Spacing);
                 CustomYLabels(mod([2:length(Spacing)+1],yspacing) ~= 0) = " ";
                 ax.YDisplayLabels = CustomYLabels;
-                ylabel(sprintf('Duration [hr]'))
+                ylabel(sprintf('Mean\nDuration [hr]'))
                 title('Linear')
                 xlabel('Start Time [hr]')
                 hAx=h5.NodeChildren(3);          % return the heatmap underlying axes handle
@@ -798,14 +795,14 @@ if isplot_exampleBlandAltman
     plot([0 1],[nanmean(yl)+1.96*nanstd(yl) nanmean(yl)+1.96*nanstd(yl)],'--k','linewidth',linewidth)
     plot([0 1],[nanmean(yl)-1.96*nanstd(yl) nanmean(yl)-1.96*nanstd(yl)],'--k','linewidth',linewidth)
     ylabel('Difference from True')
-    xlabel(sprintf('Linear & True\nAverage'))
-    title('Linear')
-    txt1 = sprintf('Mean:\n%.2f',nanmean(yl));
-    text(.975,nanmean(yl),txt1,'HorizontalAlignment','right','fontsize',fontsize_text)
-    txt2 = sprintf('+1.96SD:\n%.2f',nanmean(yl)+1.96*nanstd(yl));
-    text(.975,nanmean(yl)+1.96*nanstd(yl),txt2,'HorizontalAlignment','right','fontsize',fontsize_text)
-    txt3 = sprintf('-1.96SD:\n%.2f',nanmean(yl)-1.96*nanstd(yl));
-    text(.975,nanmean(yl)-1.96*nanstd(yl),txt3,'HorizontalAlignment','right','fontsize',fontsize_text)
+    xlabel(sprintf('Linear Interpolation & True\nAverage'))
+    title('Linear Interpolation')
+    txt1 = sprintf('Mean:\n%f',nanmean(yl));
+    text(.025,nanmean(yl),txt1,'HorizontalAlignment','left')
+    txt2 = sprintf('+1.96SD:\n%f',nanmean(yl)+1.96*nanstd(yl));
+    text(.025,nanmean(yl)+1.96*nanstd(yl),txt2,'HorizontalAlignment','left')
+    txt3 = sprintf('-1.96SD:\n%f',nanmean(yl)-1.96*nanstd(yl));
+    text(.025,nanmean(yl)-1.96*nanstd(yl),txt3,'HorizontalAlignment','left')
     grid on
     text(0.025, .23, 'A','fontweight','bold','fontsize',fontsize_letter)
     set(gca, 'fontweight','bold','fontsize',fontsize)
@@ -820,14 +817,14 @@ if isplot_exampleBlandAltman
     plot([0 1],[nanmean(ym) nanmean(ym)],'k','linewidth',linewidth)
     plot([0 1],[nanmean(ym)+1.96*nanstd(ym) nanmean(ym)+1.96*nanstd(ym)],'--k','linewidth',linewidth)
     plot([0 1],[nanmean(ym)-1.96*nanstd(ym) nanmean(ym)-1.96*nanstd(ym)],'--k','linewidth',linewidth)
-    xlabel(sprintf('Mean & True\nAverage'))
-    title('Mean')
-    txt1 = sprintf('Mean:\n%.2f',nanmean(ym));
-    text(.975,nanmean(ym),txt1,'HorizontalAlignment','right','fontsize',fontsize_text)
-    txt2 = sprintf('+1.96SD:\n%.2f',nanmean(ym)+1.96*nanstd(ym));
-    text(.975,nanmean(ym)+1.96*nanstd(ym),txt2,'HorizontalAlignment','right','fontsize',fontsize_text)
-    txt3 = sprintf('-1.96SD:\n%.2f',nanmean(ym)-1.96*nanstd(ym));
-    text(.975,nanmean(ym)-1.96*nanstd(ym),txt3,'HorizontalAlignment','right','fontsize',fontsize_text)
+    xlabel(sprintf('Mean Imputation & True\nAverage'))
+    title('Mean Imputation')
+    txt1 = sprintf('Mean:\n%f',nanmean(ym));
+    text(.025,nanmean(ym),txt1,'HorizontalAlignment','left')
+    txt2 = sprintf('+1.96SD:\n%f',nanmean(ym)+1.96*nanstd(ym));
+    text(.025,nanmean(ym)+1.96*nanstd(ym),txt2,'HorizontalAlignment','left')
+    txt3 = sprintf('-1.96SD:\n%f',nanmean(ym)-1.96*nanstd(ym));
+    text(.025,nanmean(ym)-1.96*nanstd(ym),txt3,'HorizontalAlignment','left')
     grid on
     text(0.025, .23, 'B','fontweight','bold','fontsize',fontsize_letter)
     set(gca, 'fontweight','bold','fontsize',fontsize,'yticklabel',{[]})
@@ -842,16 +839,16 @@ if isplot_exampleBlandAltman
     plot([0 1],[nanmean(y) nanmean(y)],'k','linewidth',linewidth)
     plot([0 1],[nanmean(y)+1.96*nanstd(y) nanmean(y)+1.96*nanstd(y)],'--k','linewidth',linewidth)
     plot([0 1],[nanmean(y)-1.96*nanstd(y) nanmean(y)-1.96*nanstd(y)],'--k','linewidth',linewidth)
-    xlabel(sprintf('Median & True\nAverage'))
-    title('Median')
-    txt1 = sprintf('Mean:\n%.2f',nanmean(y));
-    text(.975,nanmean(y),txt1,'HorizontalAlignment','right','fontsize',fontsize_text)
-    txt2 = sprintf('+1.96SD:\n%.2f',nanmean(y)+1.96*nanstd(y));
-    text(.975,nanmean(y)+1.96*nanstd(y),txt2,'HorizontalAlignment','right','fontsize',fontsize_text)
-    txt3 = sprintf('-1.96SD:\n%.2f',nanmean(y)-1.96*nanstd(y));
-    text(.975,nanmean(y)-1.96*nanstd(y),txt3,'HorizontalAlignment','right','fontsize',fontsize_text)
+    xlabel(sprintf('Median Imputation & True\nAverage'))
+    title('Median Imputation')
+    txt1 = sprintf('Mean:\n%f',nanmean(y));
+    text(.025,nanmean(y),txt1,'HorizontalAlignment','left')
+    txt2 = sprintf('+1.96SD:\n%f',nanmean(y)+1.96*nanstd(y));
+    text(.025,nanmean(y)+1.96*nanstd(y),txt2,'HorizontalAlignment','left')
+    txt3 = sprintf('-1.96SD:\n%f',nanmean(y)-1.96*nanstd(y));
+    text(.025,nanmean(y)-1.96*nanstd(y),txt3,'HorizontalAlignment','left')
     grid on
-    text(.025, .23, 'C','fontweight','bold','fontsize',fontsize_letter)
+    text(0.025, .23, 'C','fontweight','bold','fontsize',fontsize_letter)
     set(gca, 'fontweight','bold','fontsize',fontsize,'yticklabel',{[]})
     
     ax(4) = subplot('Position',pos4);
@@ -864,12 +861,12 @@ if isplot_exampleBlandAltman
     plot([0 1],[nanmean(ys) nanmean(ys)],'k','linewidth',linewidth)
     plot([0 1],[nanmean(ys)+1.96*nanstd(ys) nanmean(ys)+1.96*nanstd(ys)],'--k','linewidth',linewidth)
     plot([0 1],[nanmean(ys)-1.96*nanstd(ys) nanmean(ys)-1.96*nanstd(ys)],'--k','linewidth',linewidth)
-    txt1 = sprintf('Mean:\n%.2f',nanmean(ys));
-    text(.975,nanmean(ys),txt1,'HorizontalAlignment','right','fontsize',fontsize_text)
-    txt2 = sprintf('+1.96SD:\n%.2f',nanmean(y)+1.96*nanstd(ys));
-    text(.975,nanmean(ys)+1.96*nanstd(ys),txt2,'HorizontalAlignment','right','fontsize',fontsize_text)
-    txt3 = sprintf('-1.96SD:\n%.2f',nanmean(y)-1.96*nanstd(ys));
-    text(.975,nanmean(ys)-1.96*nanstd(ys),txt3,'HorizontalAlignment','right','fontsize',fontsize_text)
+    txt1 = sprintf('Mean:\n%f',nanmean(ys));
+    text(.025,nanmean(ys),txt1,'HorizontalAlignment','left')
+    txt2 = sprintf('+1.96SD:\n%f',nanmean(y)+1.96*nanstd(ys));
+    text(.025,nanmean(ys)+1.96*nanstd(ys),txt2,'HorizontalAlignment','left')
+    txt3 = sprintf('-1.96SD:\n%f',nanmean(y)-1.96*nanstd(ys));
+    text(.025,nanmean(ys)-1.96*nanstd(ys),txt3,'HorizontalAlignment','left')
     title('Masked')
     xlabel(sprintf('Masked & True\nAverage'))
     grid on
@@ -877,7 +874,7 @@ if isplot_exampleBlandAltman
     set(gca,'fontweight','bold','fontsize',fontsize,'yticklabel',{[]})
     
     linkaxes(ax,'xy')
-    xlim([0 1])
+    xlim([0 0.9])
     ylim([-0.265 0.265])
 
 end
@@ -1099,7 +1096,7 @@ if isplot_heatmaps_supp
                 CustomYLabels = string(Durs);
                 CustomYLabels(mod([2:length(Durs)+1],2) ~= 0) = " ";
                 ax.YDisplayLabels = CustomYLabels;
-                ylabel(sprintf('Duration [hr]'))
+                ylabel(sprintf('Standard Deviation\nDuration [hr]'))
                 hAx=h1.NodeChildren(3);          % return the heatmap underlying axes handle
                 hAx.FontWeight='bold';
                 hCB=h1.NodeChildren(2);          % the wanted colorbar handle
@@ -1206,7 +1203,7 @@ if isplot_heatmaps_supp
                 CustomYLabels(mod([2:length(Durs)+1],2) ~= 0) = " ";
                 ax.YDisplayLabels = CustomYLabels;
                 xlabel('Start Time [hr]')
-                ylabel(sprintf('Duration [hr]'))
+                ylabel(sprintf('Slope\nDuration [hr]'))
                 hAx=h1.NodeChildren(3);          % return the heatmap underlying axes handle
                 hAx.FontWeight='bold';
                 hCB=h1.NodeChildren(2);          % the wanted colorbar handle
@@ -1316,7 +1313,7 @@ if isplot_heatmaps_supp
                 CustomYLabels = string(Durs);
                 CustomYLabels(mod([2:length(Durs)+1],2) ~= 0) = " ";
                 ax.YDisplayLabels = CustomYLabels;
-                ylabel(sprintf('Duration [hr]'))
+                ylabel(sprintf('Standard Deviation\nDuration [hr]'))
                 hAx=h5.NodeChildren(3);          % return the heatmap underlying axes handle
                 hAx.FontWeight='bold';
                 title('Linear')
@@ -1422,7 +1419,7 @@ if isplot_heatmaps_supp
                 CustomYLabels(mod([2:length(Durs)+1],2) ~= 0) = " ";
                 ax.YDisplayLabels = CustomYLabels;
                 xlabel('Start Time [hr]')
-                ylabel(sprintf('Duration [hr]'))
+                ylabel(sprintf('Slope\nDuration [hr]'))
                 hAx=h5.NodeChildren(3);          % return the heatmap underlying axes handle
                 hAx.FontWeight='bold';
                 hCB=h5.NodeChildren(2);          % the wanted colorbar handle
@@ -1677,7 +1674,7 @@ if isplot_heatmaps_supp
                 CustomYLabels = string(Spacing);
                 CustomYLabels(mod([2:length(Spacing)+1],yspacing) ~= 0) = " ";
                 ax.YDisplayLabels = CustomYLabels;
-                ylabel(sprintf('Duration [hr]'))
+                ylabel(sprintf('Standard Deviation\nDuration [hr]'))
                 hAx=h1.NodeChildren(3);          % return the heatmap underlying axes handle
                 hAx.FontWeight='bold';
                 hCB=h1.NodeChildren(2);          % the wanted colorbar handle
@@ -1787,7 +1784,7 @@ if isplot_heatmaps_supp
                 %xticks(Starts)
                 xlabel('Start Time [hr]')
                 %xticks(Durs)
-                ylabel(sprintf('Duration [hr]'))
+                ylabel(sprintf('Slope\nDuration [hr]'))
                 hAx=h1.NodeChildren(3);          % return the heatmap underlying axes handle
                 hAx.FontWeight='bold';
                 hCB=h1.NodeChildren(2);          % the wanted colorbar handle
@@ -1899,7 +1896,7 @@ if isplot_heatmaps_supp
                 CustomYLabels(mod([2:length(Spacing)+1],yspacing) ~= 0) = " ";
                 ax.YDisplayLabels = CustomYLabels;
                 title('Linear')
-                ylabel(sprintf('Duration [hr]'))
+                ylabel(sprintf('Standard Deviation\nDuration [hr]'))
                 hAx=h5.NodeChildren(3);          % return the heatmap underlying axes handle
                 hAx.FontWeight='bold';
                 hCB=h5.NodeChildren(2);          % the wanted colorbar handle
@@ -2004,7 +2001,7 @@ if isplot_heatmaps_supp
                 CustomYLabels(mod([2:length(Spacing)+1],yspacing) ~= 0) = " ";
                 ax.YDisplayLabels = CustomYLabels;
                 xlabel('Start Time [hr]')
-                ylabel(sprintf('Duration [hr]'))
+                ylabel(sprintf('Slope\nDuration [hr]'))
                 hAx=h5.NodeChildren(3);          % return the heatmap underlying axes handle
                 hAx.FontWeight='bold';
                 hCB=h5.NodeChildren(2);          % the wanted colorbar handle
